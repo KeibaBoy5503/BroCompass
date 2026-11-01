@@ -1,14 +1,44 @@
-# BroCompass
+<h1 align="center">🧭 BroCompass</h1>
 
-**English** | [日本語](README.ja.md) | [한국어](README.ko.md)
+<p align="center">
+  <b>Block-style workout & diet notes · AI meal-photo analysis · A coach backed by PubMed papers</b><br/>
+  <i>Technical black UI with neon-green accents · Korean / Japanese / English</i>
+</p>
 
-A block-style workout & diet note app with a macro calculator, AI meal-photo analysis, and a coach that backs its advice with PubMed papers. Technical black UI with neon-green accents. The UI is available in Korean, Japanese and English.
+<p align="center">
+  <img src="https://img.shields.io/badge/Next.js-14-000000?style=for-the-badge&logo=nextdotjs" />
+  <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white" />
+  <img src="https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white" />
+  <img src="https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white" />
+  <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" />
+  <img src="https://img.shields.io/badge/SQLite-003B57?style=for-the-badge&logo=sqlite&logoColor=white" />
+</p>
+
+<p align="center">
+  <b>English</b> | <a href="README.ja.md">日本語</a> | <a href="README.ko.md">한국어</a>
+</p>
+
+---
+
+## ✨ Highlights
+
+- 📝 **One line becomes a block:** type `bench press 5x5 80` and get a workout block with plan-vs-actual tracking
+- 💾 **Local-first sync:** keeps working offline, then syncs to the server (newest edit wins)
+- 📷 **Meal-photo analysis:** vision AI estimates calories and macros, with a review step and mismatch warnings
+- 🧠 **Paper-backed coach:** finds weak points in your records and attaches PubMed papers as evidence (no evidence → says so)
+- 🎮 **Game-style feedback:** personal records, streaks, weekly quests, levels, muscle map
+- 🥊 **Combat sessions & diet helper:** session load (minutes × RPE), body-fat based diet plan linked to your TDEE
+- 🌏 **Korean / Japanese / English UI**, with typo-tolerant exercise recognition
+
+---
+
+A block-style workout & diet note app with a macro calculator, AI meal-photo analysis, and a coach that backs its advice with PubMed papers.
 
 <!-- Demo video: add the YouTube URL here when it is ready, e.g. "Demo: https://youtu.be/..." -->
 
 Implemented so far: **Phase 1** (TDEE/macro calculation API + dashboard), **Phase 2** (block-style daily note), **Phase 3** (meal-photo analysis), **Phase 4** (paper-backed coach), **Phase 5** (PC layout, game-style feedback), **Phase 6** (combat sessions, diet helper) and a Korean/Japanese/English UI. `db/schema.sql` contains the target schema that separates plans from actual performance.
 
-## Daily note (`/note`)
+## 📝 Daily Note (`/note`)
 
 A single line of text turns into a block.
 
@@ -29,7 +59,7 @@ Exercise names are recognized in Korean, Japanese and English, and small typos i
 - The PLAN vs ACTUAL bar at the top shows achievement for sets, volume, calories and protein.
 - `⧉ Copy previous plan` copies the plan of the nearest earlier record (up to 14 days back) into today. Set completion, intake checks and actual logs are cleared, and the copied blocks are appended after existing ones. Both this device and the server are searched, so records written on another device are found too.
 
-### Server storage (local-first)
+### 💾 Server Storage (local-first)
 
 - Changes are saved to the browser's `localStorage` immediately and sent to the server (`PUT /api/notes/{date}`) after 0.8 s. The app keeps working while the server is down and shows `Offline · saved on this device only`. The note is uploaded the next time that date is opened with the server running.
 - Conflict rule: **the side with the newer `updatedAt` wins.** If a device clock is far off, the older side may win.
@@ -42,7 +72,7 @@ Exercise names are recognized in Korean, Japanese and English, and small typos i
 | PUT | `/api/notes/{date}` | Save. If the server has a newer note it is not overwritten and that note is returned |
 | GET | `/api/notes?start=&end=` | Dates in a range that have at least one block |
 
-## Structure
+## 🧱 Structure
 
 ```
 brocompass/
@@ -51,7 +81,7 @@ brocompass/
 └── db/         PostgreSQL schema
 ```
 
-## Running locally
+## 🚀 Running Locally
 
 Backend:
 
@@ -73,7 +103,7 @@ npx tsc --noEmit  # type check
 
 `/api/*` requests are forwarded to FastAPI (`API_URL`, default `http://localhost:8000`) by the rewrite in `next.config.js`.
 
-## Calculation
+## 🧮 Calculation
 
 - BMR: Mifflin-St Jeor (Katch-McArdle when body-fat % is entered)
 - TDEE = BMR × activity factor (1.2 – 1.9)
@@ -82,7 +112,7 @@ npx tsc --noEmit  # type check
 
 Results are general estimates, not medical advice.
 
-## Meal-photo analysis (Phase 3)
+## 📷 Meal-Photo Analysis (Phase 3)
 
 Choose a food photo with `📷 Add meal from photo` in the daily note. The server sends it to a vision AI, which estimates calories and macros per food item; you correct the values on a review screen and add them as a meal block. (`POST /api/meal/analyze`)
 
@@ -108,7 +138,7 @@ To use OpenAI instead, set `VISION_API_KEY`, `VISION_BASE_URL=https://api.openai
 - Photos are shrunk in the browser to at most 768 px on the long side and about 150 KB before upload. The server does not store photos.
 - The list and input format of free hosted models can change. If a model breaks the JSON format the server asks once more and shows an error if it still fails. Reasoning models may return an empty answer while "thinking"; the server falls back to the reasoning text and reports when the output was truncated (`VISION_MAX_TOKENS` raises the limit).
 
-## Paper-backed coach (Phase 4, RAG)
+## 🧠 Paper-Backed Coach (Phase 4, RAG)
 
 The `/coach` screen analyzes the last 7/14/28 days of records, finds weak points, and attaches PubMed papers as evidence.
 
@@ -140,7 +170,7 @@ python ingest_pubmed.py --embed                          # (optional) also creat
 - The analysis only uses records stored in this browser. Records from other devices are not included.
 - If the AI step fails or times out, the rule-based findings and papers are still shown. The wait limit can be raised with `AI_TIMEOUT_S`.
 
-## Accuracy improvements (Phase 4.5)
+## 🎯 Accuracy Improvements (Phase 4.5)
 
 **Paper matching**
 - Each topic has **required terms** (e.g. rear delts → `deltoid`; combat sports → names of the sports) and **excluded populations** (stroke, COVID, cancer, etc. in the title), so papers that only share keywords are removed (`topics.py`).
@@ -153,7 +183,7 @@ python ingest_pubmed.py --embed                          # (optional) also creat
 - On the review screen, **portion buttons (0.5×–2×)** scale calories and macros per item at once, and mismatched calories can be recalculated from the macros.
 - If a food was misidentified, enter a **hint** (e.g. "chicken breast salad") and analyze the same photo again. The hint is passed only as a reference for the food name.
 
-## Layout and game-style feedback (Phase 5)
+## 🎮 Layout and Game-Style Feedback (Phase 5)
 
 - **PC layout**: a left sidebar on wide screens (lg and up), a bottom tab bar on narrow ones. The note screen becomes two columns on PC (records | summary and game panel).
 - **Personal records**: compared between exercises with the same name. Weighted exercises use estimated 1RM (Epley; reps counted up to 12), bodyweight exercises use reps. The first record of an exercise is not counted as a PR. A new PR triggers a notification and vibration.
@@ -163,12 +193,12 @@ python ingest_pubmed.py --embed                          # (optional) also creat
 - **Muscle map**: completed sets per muscle group over the last 7 days, shown by color (0 sets gray, 1–9 yellow, 10+ green). The classification rules are the same as in `backend/insights.py`; if you change one, update `frontend/lib/muscles.ts` too.
 - Game statistics use the notes stored on this device (localStorage).
 
-## Combat sessions and diet helper (Phase 6)
+## 🥊 Combat Sessions and Diet Helper (Phase 6)
 
 - **Session block**: writing `sparring 60min rpe7` creates a time-based training block. Load = minutes × RPE (arbitrary units, AU), and only completed sessions count. The coach warns when the last 7 days' load exceeds 1.5× the previous 7 days (when the previous load is at least 300 AU), or when there are three or more days with RPE ≥ 8. Both thresholds are heuristics.
 - **Diet helper (`/diet`)**: from current and target body-fat %, weight, maintenance calories (linked to the TDEE saved in the calculator) and weekly loss rate (% of body weight), it computes target weight, expected duration, daily intake and a weekly weight curve. It assumes lean mass stays the same and counts 7,700 kcal per kg of fat. Warnings appear for plans that are too aggressive (over 1% of body weight per week, deficit over 25%, under 1,200 kcal/day, target body fat under 10%). The body figure is a gauge that shows 5–40% body fat as height.
 
-## Multilingual UI (한국어 · 日本語 · English)
+## 🌏 Multilingual UI (한국어 · 日本語 · English)
 
 - Switch with the language button (in the sidebar, or top right on narrow screens); the choice is stored on this device. If nothing is stored, the browser language (ja/en) is used.
 - The translation dictionary lives in one place: `frontend/lib/messages.ts`. Keys are the Korean source strings, used like `t("오늘")` in code. A sentence missing from the dictionary is shown in Korean, so a missing translation never breaks the screen. Placeholders like `{n}` are filled with `t("{n}세트", { n: 3 })`.
@@ -176,11 +206,11 @@ python ingest_pubmed.py --embed                          # (optional) also creat
 - The Japanese and English strings were translated with AI assistance and have not been reviewed by native speakers yet.
 - Exercise names are recognized in Korean, Japanese or English.
 
-## Deployment
+## ☁️ Deployment
 
 See [`DEPLOY.md`](DEPLOY.md) (Korean) for the Render (backend) + Vercel (frontend) setup. `backend/Dockerfile`, `render.yaml` and `backend/smoke_check.py` are included.
 
-## Protections for a public demo
+## 🛡️ Protections for a Public Demo
 
 There is no login, so the following safeguards protect a public demo. This is not real authentication; treat it as a demo-level safety net.
 
@@ -190,10 +220,14 @@ There is no login, so the following safeguards protect a public demo. This is no
 - **Storage cap:** one user can store at most 1,000 notes.
 - **Limits:** rate-limit state lives in server memory, so it resets on restart and is counted separately per server instance.
 
-## Next steps
+## 🗺️ Next Steps
 
 - Real user authentication + Supabase (Postgres) storage
 - Coach: user-specific goals/profile, analysis of server-stored records, a vector DB (pgvector/Chroma)
 - Distribute multi-joint exercises (e.g. squat) across several muscle groups by fractional sets (design only so far)
 - Native-speaker review of the Japanese and English text
 - Evaluate the heuristic thresholds (load spike, diet warnings) against real data
+
+---
+
+<p align="center">Built by <b>KeibaBoy5503</b></p>
