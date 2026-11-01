@@ -1,0 +1,19 @@
+# Render 에서 "New → Blueprint" 로 이 저장소를 연결하면 아래 설정으로 백엔드가 만들어진다.
+# 값이 sync:false 인 항목(API 키)은 Render 대시보드에서 직접 입력한다. 이 파일에 키를 쓰지 않는다.
+services:
+  - type: web
+    name: brocompass-api
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: NVIDIA_API_KEY
+        sync: false
+      - key: REQUIRE_CLIENT_ID
+        value: "1"
+      - key: TRUST_PROXY
+        value: "1"
+      - key: AI_DAILY_CAP
+        value: "300"

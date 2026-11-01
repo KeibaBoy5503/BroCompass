@@ -1,0 +1,19 @@
+# 의존성·빌드 산출물
+node_modules/
+.next/
+.venv/
+venv/
+__pycache__/
+.pytest_cache/
+*.tsbuildinfo
+
+# 비밀·개인 데이터 (키가 들어간 파일은 절대 커밋하지 않는다)
+.env
+.env.*
+!.env.example
+*.db
+*.log
+
+# OS/편집기
+.DS_Store
+Thumbs.db
